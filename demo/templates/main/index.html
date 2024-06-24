@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gen AI Demo</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="{% static '/js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
+</head>
+<style>
+    #loadingIcon {
+        width: 30px;
+    }
+    #loadingText {
+        font-family: "Lucida Console", monospace;
+    }
+    #resultContainer {
+        min-height: 100px;
+        font-family: "Lucida Console", monospace;
+    }
+</style>
+<body class="mx-auto w-75 user-select-none">
+    <div>
+        <div id="header" class="container-fluid p-4 bg-primary text-white text-center">
+            <h1>Gen AI Demo</h1>
+        </div>
+        <div id="body" class="px-5 py-3">
+            <div class="container-fluid my-3">
+                <p>1. 해석할 파일을 업로드해주세요:</p>
+                <label id="fileLabel" for="analyzeFile" class="btn btn-info text-white">파일 업로드</label><span id="fileName" class="mx-3"></span>
+                <input id="analyzeFile" type="file" hidden>
+            </div>
+            <hr>
+            <div class="container-fluid my-3">
+                <p>2. 질문을 선택해주세요:</p>
+                <ul class="list-group my-2">
+                    <li class="container-fluid list-group-item question" data-value="question1">Sample Question 1</li>
+                    <li class="container-fluid list-group-item question" data-value="question2">Sample Question 2</li>
+                    <li class="container-fluid list-group-item question" data-value="question3">Sample Question 3</li>
+                    <li class="container-fluid list-group-item question" data-value="question4">Sample Question 4</li>
+                </ul>
+                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'img/loading.gif' %}">해석 중...</span>
+            </div>
+            <hr>
+            <div id="ResponseContainer" class="container-fluid my-3">
+                <p>3. 답변 결과:</p>
+                <div id="resultContainer" class="container-fluid border p-2 my-3 bg-light">
+                    Here is where a sample response will be displayed.
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    //로딩 중인지 확인
+    let loading = false;
+
+    //파일명, 크기 표시
+    $("#analyzeFile").on("change", function(e) {
+        let fileName = "";
+        if(e.target.files[0]) {
+            let fileSize = getFileSize(e.target.files[0]);
+            fileName = e.target.files[0].name + " (" + fileSize + ")";
+        }
+
+        $("#fileName").text(fileName);
+    });
+
+    //선택된 질문 활성화/비활성화
+    $(".question").on("click", function() {
+        let active = $(this).hasClass("active");
+        $(".question").removeClass("active");
+        if(!active) $(this).addClass("active");
+    });
+
+    //파일/질문 해석 로직
+    $("#btnSubmit").on("click", function(){
+        //해석 중
+        if(loading) {
+            alert("해석 중입니다. 잠시만 기다려주세요.");
+            return;
+        }
+
+        //첨부 파일 확인
+        let file = $("#analyzeFile")[0].files[0];
+        if(!file) {
+            alert("해석할 파일을 첨부해주세요.");
+            return;
+        }
+
+        //선택한 질문 없음
+        let questionType = $(".active").attr("data-value");
+        if(!questionType) {
+            alert("질문을 선택해주세요.");
+            return;
+        }
+
+        loading = true;
+        $("#loadingText").show();
+
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("questionType", questionType);
+
+        $.ajax({
+            url: "/summarize",
+            type: "POST",
+            success: (data) => {
+                alert("Success! Got " + data.result);
+            }
+        })
+    });
+
+    //표시할 파일 크기 계산 로직
+    const getFileSize = (file) => {
+        let size = file.size;
+        let scale = ["B", "KB", "MB", "GB", "TB"];
+        let scaleIndex = 0;
+
+        while(size > 1024 && scaleIndex < scale.length) {
+            size = Math.round(size / 1024 * 100) / 100
+            scaleIndex++;
+        }
+
+        return size + scale[scaleIndex];
+    }
+</script>
+</html>
