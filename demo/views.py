@@ -10,7 +10,7 @@ def index(request):
 
 def summarize(request):
     if request.method == 'POST':
-        return JsonResponse({"result": "successful response!"}, status=200)
+        return JsonResponse({"result": "A Successful Response!"}, status=200)
     else:
         return JsonResponse({}, status=400)
 

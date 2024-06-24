@@ -20,6 +20,7 @@
     #resultContainer {
         min-height: 100px;
         font-family: "Lucida Console", monospace;
+        user-select: text;
     }
 </style>
 <body class="mx-auto w-75 user-select-none">
@@ -47,7 +48,7 @@
             <hr>
             <div id="ResponseContainer" class="container-fluid my-3">
                 <p>3. 답변 결과:</p>
-                <div id="resultContainer" class="container-fluid border p-2 my-3 bg-light user-select-all">
+                <div id="resultContainer" class="container-fluid border p-2 my-3 bg-light">
                     Here is where a sample response will be displayed.
                 </div>
             </div>
@@ -116,7 +117,7 @@
             success: (data) => {
                 loading = false;
                 $("#loadingText").hide();
-                alert("Success! Got " + data.result);
+                $("#resultContainer").text(data.result);
             }
         })
     });

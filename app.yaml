@@ -1,0 +1,21 @@
+#Service-Name
+service: cj-enm-poc-gen-ai
+
+#Python Version 3.12
+runtime: python312
+
+# Environment Variables
+env_variables:
+
+#Static files directory
+handlers:
+  - url: /static/css
+    static_dir: static/css
+    mime_type: "text/css"
+
+  - url: /static/js
+    static_dir: static/js
+    mime_type: "text/javascript"
+
+  - url: /static/img
+    static_dir: static/img
