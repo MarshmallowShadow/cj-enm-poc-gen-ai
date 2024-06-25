@@ -1,6 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
+from demo.api import gemini
+
 
 # Create your views here.
 def index(request):
@@ -10,7 +12,9 @@ def index(request):
 
 def summarize(request):
     if request.method == 'POST':
-        return JsonResponse({"result": "A Successful Response!"}, status=200)
+        response = gemini.vertex_generate_data(request)
+        return JsonResponse(response, status=200)
+
     else:
         return JsonResponse({}, status=400)
 

@@ -107,13 +107,14 @@
         let formData = new FormData();
         formData.append("file", file);
         formData.append("questionType", questionType);
+        formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 
         $.ajax({
             url: "/summarize",
             type: "POST",
-            data: {
-                csrfmiddlewaretoken: window.CSRF_TOKEN,
-            },
+            data: formData,
+            contentType: false,
+            processData: false,
             success: (data) => {
                 loading = false;
                 $("#loadingText").hide();

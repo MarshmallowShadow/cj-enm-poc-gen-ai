@@ -22,8 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%9#7&+%j0zs9k__860bi07+i)y)j_cvgn&t64z+agukw4^)-t9'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
 ALLOWED_HOSTS = ['cj-enm-poc-gen-ai-dot-cj-enm-poc.uc.r.appspot.com', '127.0.0.1']
 
@@ -115,6 +113,8 @@ USE_I18N = True
 
 USE_TZ = False
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
