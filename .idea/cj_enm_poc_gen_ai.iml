@@ -19,6 +19,9 @@
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
   </component>
+  <component name="PackageRequirementsSettings">
+    <option name="modifyBaseFiles" value="true" />
+  </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
     <option name="myDocStringFormat" value="Plain" />

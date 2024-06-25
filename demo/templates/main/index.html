@@ -38,10 +38,10 @@
             <div class="container-fluid my-3">
                 <p>2. 질문을 선택해주세요:</p>
                 <ul class="list-group my-2">
-                    <li class="container-fluid list-group-item question" data-value="question1">Sample Question 1</li>
-                    <li class="container-fluid list-group-item question" data-value="question2">Sample Question 2</li>
-                    <li class="container-fluid list-group-item question" data-value="question3">Sample Question 3</li>
-                    <li class="container-fluid list-group-item question" data-value="question4">Sample Question 4</li>
+                    <li class="container-fluid list-group-item question" data-value="question1">한국어로 샘플 문서를 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question2">일본어로 샘플 문서를 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question3">독일어로 샘플 문서를 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question4">영어로 샘플 문서를 해석해주세요.</li>
                 </ul>
                 <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'img/loading.gif' %}">해석 중...</span>
             </div>
@@ -118,7 +118,7 @@
             success: (data) => {
                 loading = false;
                 $("#loadingText").hide();
-                $("#resultContainer").text(data.result);
+                $("#resultContainer").html(data.result.replace("\n", "<br>"));
             }
         })
     });
