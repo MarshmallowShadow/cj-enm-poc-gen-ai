@@ -12,8 +12,11 @@ def index(request):
 
 def summarize(request):
     if request.method == 'POST':
-        response = gemini.vertex_generate_data(request)
-        return JsonResponse(response, status=200)
+        try:
+            response = gemini.vertex_generate_data(request)
+            return JsonResponse(response, status=200)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
 
     else:
         return JsonResponse({}, status=400)

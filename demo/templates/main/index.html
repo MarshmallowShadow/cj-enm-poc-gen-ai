@@ -28,7 +28,7 @@
         <div id="header" class="container-fluid p-4 bg-primary text-white text-center">
             <h1>Gen AI Demo</h1>
         </div>
-        <div id="body" class="px-5 py-3">
+        <div id="body" class="px-4 py-3">
             <div class="container-fluid my-3">
                 <p>1. 해석할 파일을 업로드해주세요:</p>
                 <label id="fileLabel" for="analyzeFile" class="btn btn-info text-white">파일 업로드</label><span id="fileName" class="mx-3"></span>
@@ -113,12 +113,18 @@
             url: "/summarize",
             type: "POST",
             data: formData,
-            contentType: false,
+            //contentType: false,
             processData: false,
             success: (data) => {
                 loading = false;
                 $("#loadingText").hide();
                 $("#resultContainer").html(data.result.replace("\n", "<br>"));
+            },
+            error: (xhr, ajaxOptions, error) => {
+                console.log(xhr);
+                alert('오류가 발생했습니다. 다시 시도하세요.');
+                loading = false;
+                $("#loadingText").hide();
             }
         })
     });

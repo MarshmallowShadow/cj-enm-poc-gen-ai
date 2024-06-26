@@ -4,6 +4,9 @@ service: cj-enm-poc-gen-ai
 #Python Version 3.12
 runtime: python312
 
+#Larger Instance Class to Prevent Large Request Error
+instance_class: F4_1G
+
 # Environment Variables
 env_variables:
 
