@@ -1,6 +1,6 @@
 import base64
 import vertexai
-from vertexai.generative_models import GenerativeModel, Part, FinishReason
+from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 
 
@@ -46,18 +46,17 @@ def generate(text, document):
 def vertex_generate_data(request):
     text = ''
     if request.POST.get('questionType') == 'question1':
-        text = """Please summarize the above document in korean."""
+        text = """Please summarize the above document in Korean in the perspective of each character."""
     elif request.POST.get('questionType') == 'question2':
-        text = """Please summarize the above document in japanese."""
+        text = """Please summarize the above document in Japanese in the perspective of each character."""
     elif request.POST.get('questionType') == 'question3':
-        text = """Please summarize the above document in german."""
+        text = """Please summarize the above document in German in the perspective of each character."""
     elif request.POST.get('questionType') == 'question4':
-        text = """Please summarize the above document in English."""
+        text = """Please summarize the above document in English in the perspective of each character."""
     else:
         return {"result": "Invalid Question."}
 
-    document = Part.from_uri(
-        mime_type="application/pdf",
-        uri="gs://cloud-samples-data/generative-ai/pdf/fdic_board_meeting.pdf")
+    file = request.FILES['attachment']
+    document = Part.from_data(file.read(), file.content_type)
 
     return {"result": generate(text, document)}

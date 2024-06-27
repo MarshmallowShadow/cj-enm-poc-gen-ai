@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
     <script src="{% static '/js/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static '/js/showdown.min.js' %}"></script>
 </head>
 <style>
     #loadingIcon {
@@ -28,20 +29,20 @@
         <div id="header" class="container-fluid p-4 bg-primary text-white text-center">
             <h1>Gen AI Demo</h1>
         </div>
-        <div id="body" class="px-4 py-3">
+        <div id="body" class="py-3">
             <div class="container-fluid my-3">
                 <p>1. 해석할 파일을 업로드해주세요:</p>
                 <label id="fileLabel" for="analyzeFile" class="btn btn-info text-white">파일 업로드</label><span id="fileName" class="mx-3"></span>
-                <input id="analyzeFile" type="file" hidden>
+                <input id="analyzeFile" type="file" hidden accept="">
             </div>
             <hr>
             <div class="container-fluid my-3">
                 <p>2. 질문을 선택해주세요:</p>
                 <ul class="list-group my-2">
-                    <li class="container-fluid list-group-item question" data-value="question1">한국어로 샘플 문서를 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question2">일본어로 샘플 문서를 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question3">독일어로 샘플 문서를 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question4">영어로 샘플 문서를 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question1">한국어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question2">일본어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question3">독일어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question4">영어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
                 </ul>
                 <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'img/loading.gif' %}">해석 중...</span>
             </div>
@@ -61,15 +62,29 @@
     //로딩 중인지 확인
     let loading = false;
 
+    const fileTypes = ["text/plain", "application/rtf", "text/markdown", "text/html", "application/xml", "text/csv", "application/json", "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.oasis.opendocument.text"];
+
+    $(document).ready(function() {
+        let accept = "";
+        fileTypes.forEach(type => accept += type + ", ");
+        $("#analyzeFile").attr("accept", accept);
+    })
+
     //파일명, 크기 표시
     $("#analyzeFile").on("change", function(e) {
         let fileName = "";
         if(e.target.files[0]) {
+            if(fileTypes.indexOf(e.target.files[0].type) < 0) {
+                alert("해석 불가능한 파일 형식입니다.");
+                return false;
+            }
+
             let fileSize = getFileSize(e.target.files[0]);
             fileName = e.target.files[0].name + " (" + fileSize + ")";
         }
 
         $("#fileName").text(fileName);
+        return true;
     });
 
     //선택된 질문 활성화/비활성화
@@ -88,8 +103,8 @@
         }
 
         //첨부 파일 확인
-        let file = $("#analyzeFile")[0].files[0];
-        if(!file) {
+        let attachment = $("#analyzeFile")[0].files[0];
+        if(!attachment) {
             alert("해석할 파일을 첨부해주세요.");
             return;
         }
@@ -105,7 +120,7 @@
         $("#loadingText").show();
 
         let formData = new FormData();
-        formData.append("file", file);
+        formData.append("attachment", attachment);
         formData.append("questionType", questionType);
         formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 
@@ -113,14 +128,16 @@
             url: "/summarize",
             type: "POST",
             data: formData,
-            //contentType: false,
+            contentType: false,
             processData: false,
-            success: (data) => {
+            success: function(data) {
+                const converter = new showdown.Converter();
+                $("#resultContainer").html(converter.makeHtml(data.result));
+
                 loading = false;
                 $("#loadingText").hide();
-                $("#resultContainer").html(data.result.replace("\n", "<br>"));
             },
-            error: (xhr, ajaxOptions, error) => {
+            error: function(xhr, ajaxOptions, error) {
                 console.log(xhr);
                 alert('오류가 발생했습니다. 다시 시도하세요.');
                 loading = false;
@@ -130,7 +147,7 @@
     });
 
     //표시할 파일 크기 계산 로직
-    const getFileSize = (file) => {
+    const getFileSize = function(file) {
         let size = file.size;
         let scale = ["B", "KB", "MB", "GB", "TB"];
         let scaleIndex = 0;
