@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Gen AI Demo</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'demo/img/favicon.png' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static '/css/bootstrap.min.css' %}">
-    <script src="{% static '/js/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static '/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static '/js/showdown.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static '/demo/css/bootstrap.min.css' %}">
+    <script src="{% static '/demo/js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static '/demo/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static '/demo/js/showdown.min.js' %}"></script>
 </head>
 <style>
     #loadingIcon {
@@ -44,7 +44,7 @@
                     <li class="container-fluid list-group-item question" data-value="question3">독일어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
                     <li class="container-fluid list-group-item question" data-value="question4">영어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
                 </ul>
-                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'img/loading.gif' %}">해석 중...</span>
+                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
             </div>
             <hr>
             <div id="ResponseContainer" class="container-fluid my-3">
