@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from demo.utils import gemini
+from demo.utils import gemini, storage
 
 
 # Create your views here.
@@ -12,7 +12,12 @@ def index(request):
 def summarize(request):
     if request.method == 'POST':
         try:
-            response = gemini.vertex_generate_data(request)
+            file = request.FILES['attachment']
+            question_type = request.POST['questionType']
+
+            storage.upload_file(file)
+            response = gemini.vertex_generate_data(file, question_type)
+
             return JsonResponse(response, status=200)
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)

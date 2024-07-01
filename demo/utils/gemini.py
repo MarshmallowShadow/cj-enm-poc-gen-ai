@@ -43,20 +43,19 @@ def generate(text, document):
     return result
 
 
-def vertex_generate_data(request):
-    text = ''
-    if request.POST.get('questionType') == 'question1':
+def vertex_generate_data(file, question_type):
+    if question_type == 'question1':
         text = """Please summarize the above document in Korean in the perspective of each character."""
-    elif request.POST.get('questionType') == 'question2':
+    elif question_type == 'question2':
         text = """Please summarize the above document in Japanese in the perspective of each character."""
-    elif request.POST.get('questionType') == 'question3':
+    elif question_type == 'question3':
         text = """Please summarize the above document in German in the perspective of each character."""
-    elif request.POST.get('questionType') == 'question4':
+    elif question_type == 'question4':
         text = """Please summarize the above document in English in the perspective of each character."""
     else:
         return {"result": "Invalid Question."}
 
-    file = request.FILES['attachment']
+    file.seek(0)
     document = Part.from_data(file.read(), file.content_type)
 
     return {"result": generate(text, document)}
