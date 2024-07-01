@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from demo.api import gemini
+from demo.utils import gemini
 
 
 # Create your views here.

@@ -7,8 +7,9 @@ runtime: python312
 #Larger Instance Class to Prevent Large Request Error
 instance_class: F4_1G
 
+#Environment Variables
 includes:
-  - env_variables.yaml  #Environment Variables
+  - env_variables.yaml
 
 #Static files directory
 handlers:
@@ -17,15 +18,3 @@ handlers:
 
   - url: /static/admin
     static_dir: static/admin
-
-# Backup
-#  - url: /static/css
-#    static_dir: static/css
-#    mime_type: "text/css"
-#
-#  - url: /static/js
-#    static_dir: static/js
-#    mime_type: "text/javascript"
-#
-#  - url: /static/img
-#    static_dir: static/img
