@@ -9,7 +9,7 @@ intro_text = ("""Your are a very professional document summarization specialist.
 
 generation_config = {
     "max_output_tokens": 8192,
-    "temperature": 1,
+    "temperature": 0,
     "top_p": 0.95,
 }
 
