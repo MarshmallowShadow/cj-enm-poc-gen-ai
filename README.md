@@ -1,4 +1,4 @@
-# CJ E&M Gen AI POC
+# CJ E&M Gen AI POC :books:
 
 ## Specifications
 - Language: Python 3.12
