@@ -19,6 +19,7 @@
 ## Libraries to Install :snake:
 ```shell
 pip install django
+pip install venv
 pip install google-cloud-storage
 pip install google-cloud-aiplatform
 pip install mysqlclient
