@@ -14,11 +14,15 @@ def summarize(request):
         try:
             file = request.FILES['attachment']
             question_type = request.POST['questionType']
+            upload_yn = request.POST['uploadYn']
 
-            storage.upload_file(file)
+            if upload_yn == "true":
+                storage.upload_file(file)
+
             response = gemini.vertex_generate_data(file, question_type)
 
             return JsonResponse(response, status=200)
+
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
 

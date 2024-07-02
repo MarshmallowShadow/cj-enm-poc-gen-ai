@@ -15,6 +15,5 @@ includes:
 handlers:
   - url: /static/demo
     static_dir: static/demo
-
   - url: /static/admin
     static_dir: static/admin

@@ -1,7 +1,8 @@
 from google.cloud import storage
 import os
 
-# Google Service Account Credentials
+# Google Service Account Key Path
+# ex) "/home/user/Downloads/service-account-file.json"
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = ""
 
 
