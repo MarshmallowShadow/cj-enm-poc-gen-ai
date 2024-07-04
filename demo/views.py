@@ -6,20 +6,20 @@ from demo.utils import gemini, storage
 
 # Create your views here.
 def index(request):
-    return render(request, 'main/index.html')
+    file_list = storage.get_file_list()
+    context = {"file_list": file_list}
+    return render(request, 'main/index.html', context=context)
 
 
 def summarize(request):
     if request.method == 'POST':
         try:
-            file = request.FILES['attachment']
-            question_type = request.POST['questionType']
+            response = gemini.vertex_generate_data(request)
+
             upload_yn = request.POST['uploadYn']
-
-            if upload_yn == "true":
-                storage.upload_file(file)
-
-            response = gemini.vertex_generate_data(file, question_type)
+            if upload_yn == "true" and bool(request.FILES):
+                file_list = storage.upload_file(request.FILES['attachment'])
+                response['file_list'] = file_list
 
             return JsonResponse(response, status=200)
 

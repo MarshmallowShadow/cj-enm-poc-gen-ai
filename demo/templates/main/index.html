@@ -12,6 +12,9 @@
     <script src="{% static '/demo/js/showdown.min.js' %}"></script>
 </head>
 <style>
+    body {
+        max-width: 46rem;
+    }
     #loadingIcon {
         width: 30px;
     }
@@ -23,20 +26,35 @@
         font-family: "Lucida Console", monospace;
         user-select: text;
     }
+    .fileList {
+        width: 500px;
+    }
 </style>
-<body class="mx-auto w-75 user-select-none">
+<body class="mx-auto user-select-none bg-light">
     <div>
-        <div id="header" class="container-fluid p-4 bg-primary text-white text-center">
+        <div id="header" class="container-fluid p-4 text-center">
             <h1>Gen AI Demo</h1>
         </div>
         <div id="body" class="py-3">
             <div class="container-fluid my-3">
-                <p>1. 해석할 파일을 업로드해주세요:</p>
-                <label id="fileLabel" for="analyzeFile" class="btn btn-info text-white">파일 업로드</label><span id="fileName" class="mx-3"></span>
-                <input id="analyzeFile" type="file" name="attachment" hidden accept="">
-                <div class="form-check form-switch my-3">
-                    <input id="uploadYn" class="form-check-input" type="checkbox" name="uploadYn" value="Y">
-                    <label for="uploadYn" class="form-check-label">파일을 클라우드에 저장</label>
+                <fieldset id="uploadFieldset">
+                    <p>1. 해석할 파일을 업로드해주세요:</p>
+                    <label for="analyzeFile" class="btn btn-dark text-white">파일 업로드</label><span id="fileName" class="mx-3">최대 32MB</span>
+                    <input id="analyzeFile" type="file" name="attachment" hidden accept="">
+                    <div class="form-check form-switch my-3">
+                        <input id="uploadYn" class="form-check-input" type="checkbox" name="uploadYn" value="Y">
+                        <label for="uploadYn" class="form-check-label">파일을 클라우드에 저장</label>
+                    </div>
+                </fieldset>
+                <div id="fileListContainer">
+                {% if file_list %}
+                <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
+                <ul class="list-group fileList">
+                {% for file_name in file_list %}
+                    <li class="list-group-item list-group-item-secondary fileName">{{ file_name }}</li>
+                {% endfor %}
+                </ul>
+                {% endif %}
                 </div>
             </div>
             <hr>
@@ -47,13 +65,15 @@
                     <li class="container-fluid list-group-item question" data-value="question2">일본어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
                     <li class="container-fluid list-group-item question" data-value="question3">독일어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
                     <li class="container-fluid list-group-item question" data-value="question4">영어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question custom" data-value="questionCustom"><label for="customQuestion">질문 직접 입력</label></li>
                 </ul>
+                <input id="customQuestion" class="form-control my-2" type="text" placeholder="질문 입력" disabled>
                 <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
             </div>
             <hr>
             <div id="ResponseContainer" class="container-fluid my-3">
                 <p>3. 답변 결과:</p>
-                <div id="resultContainer" class="container-fluid border p-2 my-3 bg-light">
+                <div id="resultContainer" class="container-fluid border p-2 my-3 bg-white">
                     Here is where a sample response will be displayed.
                 </div>
             </div>
@@ -91,11 +111,30 @@
         return true;
     });
 
+    //선택된 파일 활성화/비활성화
+    $(".fileName").on("click", function() {
+        let active = $(this).hasClass("active");
+        $(".fileName").removeClass("active");
+        if(!active) {
+            $(this).addClass("active");
+        }
+        if($(".fileName.active").text()) {
+            $("#uploadFieldset").prop("disabled", true);
+        } else {
+            $("#uploadFieldset").prop("disabled", false);
+        }
+    });
+
     //선택된 질문 활성화/비활성화
     $(".question").on("click", function() {
         let active = $(this).hasClass("active");
+
         $(".question").removeClass("active");
+
         if(!active) $(this).addClass("active");
+
+        if($(".question.active")?.hasClass("custom")) $("#customQuestion").prop("disabled", false);
+        else $("#customQuestion").prop("disabled", true).val("");
     });
 
     //파일/질문 해석 로직
@@ -108,15 +147,20 @@
 
         //첨부 파일 확인
         let attachment = $("#analyzeFile")[0].files[0];
-        if(!attachment) {
-            alert("해석할 파일을 첨부해주세요.");
+        let fileName = $(".fileName.active").text();
+        if(!attachment && !fileName) {
+            alert("해석할 파일을 선택해주세요.");
             return;
         }
 
         //선택한 질문 없음
-        let questionType = $(".active").attr("data-value");
+        let questionType = $(".question.active").attr("data-value");
+        let customQuestion = $("#customQuestion").val();
         if(!questionType) {
             alert("질문을 선택해주세요.");
+            return;
+        } else if(questionType === "questionCustom" && !customQuestion) {
+            alert("질문을 입력해주세요.");
             return;
         }
 
@@ -127,8 +171,12 @@
 
         let formData = new FormData();
         formData.append("uploadYn", uploadYn);
-        formData.append("attachment", attachment);
+
+        if(fileName) formData.append("fileName", fileName);
+        else formData.append("attachment", attachment);
+
         formData.append("questionType", questionType);
+        formData.append("customQuestion", customQuestion);
         formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 
         $.ajax({
@@ -140,6 +188,15 @@
             success: function(data) {
                 const converter = new showdown.Converter();
                 $("#resultContainer").html(converter.makeHtml(data.result));
+
+                if(data.file_list) {
+                    $("#fileListContainer").html(`
+                        <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
+                        <ul class="list-group fileList">
+                            ` + data.file_list.map(fileName => `<li class="list-group-item list-group-item-secondary fileName">` + fileName  + `</li>`).join("") + `
+                        </ul>
+                    `)
+                }
 
                 loading = false;
                 $("#loadingText").hide();

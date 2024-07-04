@@ -3,6 +3,7 @@ import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
 
+from . import storage
 
 intro_text = ("""Your are a very professional document summarization specialist."""
               """Given a document, your task is to strictly follow the user\'s instructions.""")
@@ -43,7 +44,9 @@ def generate(text, document):
     return result
 
 
-def vertex_generate_data(file, question_type):
+def vertex_generate_data(request):
+    question_type = request.POST['questionType']
+
     if question_type == 'question1':
         text = """Please summarize the above document in Korean in the perspective of each character."""
     elif question_type == 'question2':
@@ -52,10 +55,17 @@ def vertex_generate_data(file, question_type):
         text = """Please summarize the above document in German in the perspective of each character."""
     elif question_type == 'question4':
         text = """Please summarize the above document in English in the perspective of each character."""
+    elif question_type == 'questionCustom':
+        text = request.POST['customQuestion']
     else:
         return {"result": "Invalid Question."}
 
-    file.seek(0)
-    document = Part.from_data(file.read(), file.content_type)
+    if bool(request.FILES):
+        file = request.FILES['attachment']
+        file.seek(0)
+        document = Part.from_data(file.read(), file.content_type)
+    else:
+        file_info = storage.get_file_info(request.POST['fileName'])
+        document = Part.from_uri(file_info['uri'], file_info['content_type'])
 
     return {"result": generate(text, document)}
