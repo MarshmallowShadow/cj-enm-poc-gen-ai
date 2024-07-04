@@ -11,6 +11,7 @@
 ## Required Environment Variables :key:
 - **SECRET_KEY** (파이썬 시크릿 키)
 - **BUCKET_NAME** (Google Cloud Storage 버킷 이름)
+- **BLOB_PREFIX** (파일 저장 경로)
 - **DB_NAME** (데이터베이스명)
 - **DB_HOST** (데이터베이스 IP 주소)
 - **DB_USER** (DB 사용자명)
