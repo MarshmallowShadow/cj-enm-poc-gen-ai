@@ -23,7 +23,8 @@
         font-family: "Lucida Console", monospace;
     }
     #resultContainer {
-        min-height: 10rem;
+        height: 30rem;
+        overflow: auto;
         user-select: text;
     }
     .fileList {
@@ -48,29 +49,28 @@
                         </div>
                     </fieldset>
                     <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
-                    <ul id="fileListContainer" class="list-group fileList">
+                    <ul id="fileListContainer" class="list-group fileList h-100 overflow-auto">
                         <li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>
                     </ul>
                 </div>
-                <hr>
                 <div class="my-3">
                     <p>2. 질문을 선택해주세요:</p>
                     <ul class="list-group my-2">
-                        <li class="container-fluid list-group-item question" data-value="summaryChapter">컨텐츠의 전반적인 줄거리와 각 챕터 및 에피소드 별로 요약해주세요.</li>
-                        <li class="container-fluid list-group-item question" data-value="summaryCharacters">컨텐츠에 나오는 캐릭터들의 이름, 성별, 나이 및 역할 소개해주세요.</li>
-                        <li class="container-fluid list-group-item question custom" data-value="questionCustom"><label for="customQuestion">질문 직접 입력</label></li>
+                        <li class="container-fluid list-group-item question">[컨텐츠]의 출연진 및 캐릭터를 이름, 성별, 나이, 역할별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question">[컨텐츠]의 전반적인 줄거리를 설명해줘</li>
+                        <li class="container-fluid list-group-item question">[컨텐츠]의 주요 에피소드를 챕터별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question">[컨텐츠]의 주요 에피소드를 캐릭터별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question custom"><label for="customQuestion">질문 직접 입력</label></li>
                     </ul>
                     <textarea id="customQuestion" class="form-control my-2" type="text" placeholder="여기에 질문을 자유롭게 입력해주세요." disabled></textarea>
                     <button id="btnSubmit" class="btn btn-primary">해석하기</button><span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
                 </div>
-                <hr>
             </div>
             <div id="ResponseContainer" class="d-flex flex-column m-3">
                 <p>3. 답변 결과:</p>
-                <div id="resultContainer" class="container-fluid border p-2 my-2 bg-white h-100">
+                <div id="resultContainer" class="container-fluid border p-2 my-2 bg-white">
                     Here is where a sample response will be displayed.
                 </div>
-                <hr>
             </div>
         </div>
     </div>
@@ -153,12 +153,12 @@
         }
 
         //선택한 질문 없음
-        let questionType = $(".question.active").attr("data-value");
+        let question = $(".question.active").text();
         let customQuestion = $("#customQuestion").val();
-        if(!questionType) {
+        if(!question) {
             alert("질문을 선택해주세요.");
             return;
-        } else if(questionType === "questionCustom" && !customQuestion) {
+        } else if(question === "질문 직접 입력" && !customQuestion) {
             alert("질문을 입력해주세요.");
             return;
         }
@@ -174,7 +174,7 @@
         if(fileName) formData.append("fileName", fileName);
         else formData.append("attachment", attachment);
 
-        formData.append("questionType", questionType);
+        formData.append("question", question);
         formData.append("customQuestion", customQuestion);
         formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 

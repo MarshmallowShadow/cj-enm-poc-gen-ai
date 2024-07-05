@@ -46,18 +46,6 @@ def generate(text, document):
 
 
 def vertex_generate_data(request):
-    question_type = request.POST['questionType']
-
-    if question_type == 'summaryChapter':
-        text = """Please summarize the above document per chapter and episode."""
-    elif question_type == 'summaryCharacters':
-        text = """From the above document, please describe each characters by their name, gender, age, 
-                    and role in the story."""
-    elif question_type == 'questionCustom':
-        text = request.POST['customQuestion']
-    else:
-        return {"result": "Invalid Question."}
-
     if bool(request.FILES):
         file = request.FILES['attachment']
         file.seek(0)
@@ -65,5 +53,12 @@ def vertex_generate_data(request):
     else:
         file_info = storage.get_file_info(request.POST['fileName'])
         document = Part.from_uri(file_info['uri'], file_info['content_type'])
+
+    text = request.POST['question']
+
+    if text == '질문 직접 입력':
+        text = request.POST['customQuestion']
+
+    text = text.replace("[컨텐츠]", "위 문서")
 
     return {"result": generate(text, document)}
