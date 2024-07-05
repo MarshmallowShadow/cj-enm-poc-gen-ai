@@ -62,7 +62,7 @@
                     <li class="container-fluid list-group-item question custom" data-value="questionCustom"><label for="customQuestion">질문 직접 입력</label></li>
                 </ul>
                 <input id="customQuestion" class="form-control my-2" type="text" placeholder="질문 입력" disabled>
-                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span class="mx-2" id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-1" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
+                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
             </div>
             <hr>
             <div id="ResponseContainer" class="container-fluid my-3">
