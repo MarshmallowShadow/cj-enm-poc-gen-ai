@@ -5,8 +5,9 @@ import vertexai.preview.generative_models as generative_models
 
 from . import storage
 
-intro_text = ("""Your are a very professional document summarization specialist."""
-              """Given a document, your task is to strictly follow the user\'s instructions.""")
+intro_text = """Your are a very professional document summarization specialist.
+              Given a document, your task is to strictly follow the user\'s instructions.
+              please always respond in Korean unless said so otherwise."""
 
 generation_config = {
     "max_output_tokens": 8192,
@@ -47,14 +48,15 @@ def generate(text, document):
 def vertex_generate_data(request):
     question_type = request.POST['questionType']
 
-    if question_type == 'question1':
+    if question_type == 'summaryKorean':
         text = """Please summarize the above document in Korean in the perspective of each character."""
-    elif question_type == 'question2':
-        text = """Please summarize the above document in Japanese in the perspective of each character."""
-    elif question_type == 'question3':
-        text = """Please summarize the above document in German in the perspective of each character."""
-    elif question_type == 'question4':
+    elif question_type == 'summaryEnglish':
         text = """Please summarize the above document in English in the perspective of each character."""
+    elif question_type == 'summaryChapter':
+        text = """Please summarize the above document per chapter and episode."""
+    elif question_type == 'summaryCharacters':
+        text = """From the above document, please describe each characters by their name, gender, age, 
+                    and role in the story."""
     elif question_type == 'questionCustom':
         text = request.POST['customQuestion']
     else:
