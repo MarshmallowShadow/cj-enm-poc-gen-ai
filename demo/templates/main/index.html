@@ -112,7 +112,7 @@
     });
 
     //선택된 파일 활성화/비활성화
-    $(".fileName").on("click", function() {
+    $(document).on("click", ".fileName", function() {
         let active = $(this).hasClass("active");
         $(".fileName").removeClass("active");
         if(!active) {
