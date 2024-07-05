@@ -15,7 +15,6 @@ def upload_file(file):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(prefix + file.name)
     blob.upload_from_file(file_obj=file, content_type=file.content_type)
-    return get_file_list()
 
 
 def get_file_list():

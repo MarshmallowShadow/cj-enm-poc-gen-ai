@@ -14,12 +14,14 @@ def index(request):
 def summarize(request):
     if request.method == 'POST':
         try:
-            response = gemini.vertex_generate_data(request)
-
             upload_yn = request.POST['uploadYn']
             if upload_yn == "true" and bool(request.FILES):
-                file_list = storage.upload_file(request.FILES['attachment'])
-                response['file_list'] = file_list
+                storage.upload_file(request.FILES['attachment'])
+
+            response = gemini.vertex_generate_data(request)
+
+            file_list = storage.get_file_list()
+            response['file_list'] = file_list
 
             return JsonResponse(response, status=200)
 

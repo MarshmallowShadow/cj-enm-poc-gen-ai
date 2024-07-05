@@ -46,16 +46,10 @@
                         <label for="uploadYn" class="form-check-label">파일을 클라우드에 저장</label>
                     </div>
                 </fieldset>
-                <div id="fileListContainer">
-                {% if file_list %}
                 <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
-                <ul class="list-group fileList">
-                {% for file_name in file_list %}
-                    <li class="list-group-item list-group-item-secondary fileName">{{ file_name }}</li>
-                {% endfor %}
+                <ul id="fileListContainer" class="list-group fileList">
+                    <li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>
                 </ul>
-                {% endif %}
-                </div>
             </div>
             <hr>
             <div class="container-fluid my-3">
@@ -68,7 +62,7 @@
                     <li class="container-fluid list-group-item question custom" data-value="questionCustom"><label for="customQuestion">질문 직접 입력</label></li>
                 </ul>
                 <input id="customQuestion" class="form-control my-2" type="text" placeholder="질문 입력" disabled>
-                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
+                <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span class="mx-2" id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-1" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
             </div>
             <hr>
             <div id="ResponseContainer" class="container-fluid my-3">
@@ -92,6 +86,10 @@
         let accept = "";
         fileTypes.forEach(type => accept += type + ", ");
         $("#analyzeFile").attr("accept", accept);
+
+        let fileList = {{ file_list|safe }};
+        console.log(fileList);
+        updateFileList(fileList)
     })
 
     //파일명, 크기 표시
@@ -189,14 +187,7 @@
                 const converter = new showdown.Converter();
                 $("#resultContainer").html(converter.makeHtml(data.result));
 
-                if(data.file_list) {
-                    $("#fileListContainer").html(`
-                        <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
-                        <ul class="list-group fileList">
-                            ` + data.file_list.map(fileName => `<li class="list-group-item list-group-item-secondary fileName">` + fileName  + `</li>`).join("") + `
-                        </ul>
-                    `)
-                }
+                updateFileList(data.file_list);
 
                 loading = false;
                 $("#loadingText").hide();
@@ -222,6 +213,21 @@
         }
 
         return size + scale[scaleIndex];
+    }
+
+    const updateFileList = function(fileList) {
+        const fileListHtml = (fileName) => {return `<li class="list-group-item list-group-item-secondary fileName">` + fileName + `</li>`}
+        const emptyHtml = `<li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>`;
+        const fileListContainer = $("#fileListContainer");
+
+        fileListContainer.html("");
+        if(fileList.length) {
+            fileList.forEach(fileName => {
+                fileListContainer.append(fileListHtml(fileName));
+            });
+        } else {
+            fileListContainer.append(emptyHtml);
+        }
     }
 </script>
 </html>
