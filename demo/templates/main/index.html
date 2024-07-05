@@ -55,13 +55,14 @@
             <div class="container-fluid my-3">
                 <p>2. 질문을 선택해주세요:</p>
                 <ul class="list-group my-2">
-                    <li class="container-fluid list-group-item question" data-value="question1">한국어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question2">일본어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question3">독일어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
-                    <li class="container-fluid list-group-item question" data-value="question4">영어로 각 케릭터 입장에서 문서 내용을 해석해주세요.</li>
+
+                    <li class="container-fluid list-group-item question" data-value="question1">한국어로 각 케릭터 입장에서 컨텐츠 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question2">일본어로 각 케릭터 입장에서 컨텐츠 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question3">독일어로 각 케릭터 입장에서 컨텐츠 내용을 해석해주세요.</li>
+                    <li class="container-fluid list-group-item question" data-value="question4">영어로 각 케릭터 입장에서 컨텐츠 내용을 해석해주세요.</li>
                     <li class="container-fluid list-group-item question custom" data-value="questionCustom"><label for="customQuestion">질문 직접 입력</label></li>
                 </ul>
-                <input id="customQuestion" class="form-control my-2" type="text" placeholder="질문 입력" disabled>
+                <textarea id="customQuestion" class="form-control my-2" type="text" placeholder="여기에 질문을 자유롭게 입력해주세요." disabled></textarea>
                 <button id="btnSubmit" class="btn btn-primary">해석하기</button> <span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
             </div>
             <hr>
