@@ -59,6 +59,4 @@ def vertex_generate_data(request):
     if text == '질문 직접 입력':
         text = request.POST['customQuestion']
 
-    text = text.replace("[컨텐츠]", "위 문서")
-
     return {"result": generate(text, document)}

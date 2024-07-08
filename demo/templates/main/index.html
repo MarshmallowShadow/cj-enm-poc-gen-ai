@@ -56,10 +56,10 @@
                 <div class="my-3">
                     <p>2. 질문을 선택해주세요:</p>
                     <ul class="list-group my-2">
-                        <li class="container-fluid list-group-item question">[컨텐츠]의 출연진 및 캐릭터를 이름, 성별, 나이, 역할별로 설명해줘</li>
-                        <li class="container-fluid list-group-item question">[컨텐츠]의 전반적인 줄거리를 설명해줘</li>
-                        <li class="container-fluid list-group-item question">[컨텐츠]의 주요 에피소드를 챕터별로 설명해줘</li>
-                        <li class="container-fluid list-group-item question">[컨텐츠]의 주요 에피소드를 캐릭터별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question">주어진 문서의 출연진 및 캐릭터를 이름, 성별, 나이, 역할별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question">주어진 문서의 전반적인 줄거리를 설명해줘</li>
+                        <li class="container-fluid list-group-item question">주어진 문서의 주요 에피소드를 챕터별로 설명해줘</li>
+                        <li class="container-fluid list-group-item question">주어진 문서의 주요 에피소드를 캐릭터별로 설명해줘</li>
                         <li class="container-fluid list-group-item question custom"><label for="customQuestion">질문 직접 입력</label></li>
                     </ul>
                     <textarea id="customQuestion" class="form-control my-2" type="text" placeholder="여기에 질문을 자유롭게 입력해주세요." disabled></textarea>
@@ -217,14 +217,15 @@
     }
 
     const updateFileList = function(fileList) {
-        const fileListHtml = (fileName) => {return `<li class="list-group-item list-group-item-secondary fileName">` + fileName + `</li>`}
+        const fileListHtml = (fileName, activeName) => {return `<li class="list-group-item list-group-item-secondary fileName ` + ((fileName === activeName) ? `active` : ``) + `">` + fileName + `</li>`}
         const emptyHtml = `<li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>`;
         const fileListContainer = $("#fileListContainer");
+        const activeName = $(".fileName.active").text();
 
         fileListContainer.html("");
         if(fileList.length) {
             fileList.forEach(fileName => {
-                fileListContainer.append(fileListHtml(fileName));
+                fileListContainer.append(fileListHtml(fileName, activeName));
             });
         } else {
             fileListContainer.append(emptyHtml);
