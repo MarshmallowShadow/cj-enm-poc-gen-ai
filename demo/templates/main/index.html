@@ -24,7 +24,7 @@
         width: 2rem;
     }
 
-    #LoadingText, #ResultContainer {
+    #LoadingText, #ResultContainer, #OptionsModal .modal-body {
         font-family: "Lucida Console", monospace;
     }
 
@@ -121,7 +121,7 @@
                 </div>
                 <div class="modal-body">
                     <label for="temperature" class="form-label">Temperature: <output id="temperatureVal"></output></label>
-                    <input type="range" class="form-range" id="temperature" min="0" max="1" step="0.1" value="0">
+                    <input type="range" class="form-range" id="temperature" min="0" max="2" step="0.1" value="0">
                     <label for="topP" class="form-label">TopP: <output id="topPVal"></output></label>
                     <input type="range" class="form-range" id="topP" min="0" max="1" step="0.01" value="0.95">
                 </div>
