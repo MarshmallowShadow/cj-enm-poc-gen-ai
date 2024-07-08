@@ -61,7 +61,7 @@
                     </fieldset>
                     <p><strong>OR</strong></p>
                     <div class="d-flex align-items-center gap-3">
-                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#CloudModal">클라우드에서 파일 선택</button><ul class="list-group"><li id="fileSelectedName" class="d-flex align-items-center list-group-item list-group-item-light">(선택된 파일이 없습니다.)</li></ul>
+                        <button class="btn btn-light border-dark" data-bs-toggle="modal" data-bs-target="#CloudModal">클라우드에서 파일 선택</button><ul class="list-group"><li id="fileSelectedName" class="d-flex align-items-center list-group-item list-group-item-light">(선택된 파일이 없습니다.)</li></ul>
                     </div>
                 </div>
                 <div class="my-3">
@@ -74,6 +74,7 @@
                         <li class="container-fluid list-group-item question custom"><label for="customQuestion">질문 직접 입력</label></li>
                     </ul>
                     <textarea id="customQuestion" class="form-control my-2" type="text" placeholder="여기에 질문을 자유롭게 입력해주세요." disabled></textarea>
+                    <button data-bs-target="#OptionsModal" data-bs-toggle="modal" class="btn btn-dark">추가 옵션</button>
                     <button id="btnSubmit" class="btn btn-primary">해석하기</button><span id="LoadingText" style="display: none;"><img alt="" id="LoadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
                 </div>
             </div>
@@ -115,10 +116,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
+                    <label for="temperature" class="form-label">Temperature: <output id="temperatureVal"></output></label>
+                    <input type="range" class="form-range" id="temperature" min="0" max="1" step="0.1" value="0">
+                    <label for="topP" class="form-label">TopP: <output id="topPVal"></output></label>
+                    <input type="range" class="form-range" id="topP" min="0" max="1" step="0.01" value="0.95">
                 </div>
                 <div class="modal-footer">
-                    <button class="btn-dark" data-bs-dismiss="modal">확인</button>
+                    <button class="btn btn-dark" data-bs-dismiss="modal">확인</button>
                 </div>
             </div>
         </div>
@@ -138,8 +142,9 @@
         $("#analyzeFile").attr("accept", accept);
 
         let fileList = {{ file_list|safe }};
-        console.log(fileList);
-        updateFileList(fileList)
+        updateFileList(fileList);
+        $("#temperatureVal").text($("#temperature").val())
+        $("#topPVal").text($("#topP").val())
     })
 
     //파일명, 크기 표시
@@ -157,6 +162,14 @@
 
         $("#fileName").text(fileName);
         return true;
+    });
+
+    $("#temperature").on("input", function(){
+        $("#temperatureVal").text($(this).val());
+    });
+
+    $("#topP").on("input", function(){
+        $("#topPVal").text($(this).val());
     });
 
     //선택된 파일 활성화/비활성화
@@ -223,15 +236,19 @@
         $("#LoadingText").show();
 
         let uploadYn = $("#uploadYn").is(":checked");
+        let temperature = $("#temperature").val();
+        let topP = $("#topP").val();
 
         let formData = new FormData();
-        formData.append("uploadYn", uploadYn);
 
         if(fileName) formData.append("fileName", fileName);
         else formData.append("attachment", attachment);
 
+        formData.append("uploadYn", uploadYn);
         formData.append("question", question);
         formData.append("customQuestion", customQuestion);
+        formData.append("temperature", temperature);
+        formData.append("topP", topP);
         formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 
         $.ajax({

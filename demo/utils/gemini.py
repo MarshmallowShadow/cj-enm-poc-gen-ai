@@ -1,4 +1,6 @@
 import base64
+from decimal import Decimal
+
 import vertexai
 from vertexai.generative_models import GenerativeModel, Part
 import vertexai.preview.generative_models as generative_models
@@ -8,12 +10,6 @@ from . import storage
 intro_text = """Your are a very professional document summarization specialist.
               Given a document, your task is to strictly follow the user\'s instructions.
               please always respond in Korean unless said so otherwise."""
-
-generation_config = {
-    "max_output_tokens": 8192,
-    "temperature": 0,
-    "top_p": 0.95,
-}
 
 safety_settings = {
     generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH:
@@ -27,12 +23,19 @@ safety_settings = {
 }
 
 
-def generate(text, document):
+def generate(text, document, temperature, top_p):
     result = ""
     vertexai.init(project="cj-enm-poc", location="us-central1")
     model = GenerativeModel(
         "gemini-1.5-flash-001",
     )
+
+    generation_config = {
+        "max_output_tokens": 8192,
+        "temperature": temperature,
+        "top_p": top_p,
+    }
+
     responses = model.generate_content(
         [intro_text, document, text],
         generation_config=generation_config,
@@ -54,9 +57,11 @@ def vertex_generate_data(request):
         file_info = storage.get_file_info(request.POST['fileName'])
         document = Part.from_uri(file_info['uri'], file_info['content_type'])
 
-    text = request.POST['question']
+    temperature = Decimal(request.POST['temperature'])
+    top_p = Decimal(request.POST['topP'])
 
+    text = request.POST['question']
     if text == '질문 직접 입력':
         text = request.POST['customQuestion']
 
-    return {"result": generate(text, document)}
+    return {"result": generate(text, document, temperature, top_p)}
