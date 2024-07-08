@@ -12,23 +12,34 @@
     <script src="{% static '/demo/js/showdown.min.js' %}"></script>
 </head>
 <style>
+    #fileSelectedName {
+        width: 25rem;
+    }
+
     #QuestionContainer, #ResponseContainer {
         width: 40rem;
     }
 
-    #loadingIcon {
+    #LoadingIcon {
         width: 2rem;
     }
-    #loadingText, #resultContainer {
+
+    #LoadingText, #ResultContainer {
         font-family: "Lucida Console", monospace;
     }
-    #resultContainer {
+
+    #ResultContainer {
         height: 30rem;
         overflow: auto;
         user-select: text;
     }
+
     .fileList {
         max-width: 30rem;
+    }
+
+    .cancelSelectBtn {
+        cursor: pointer;
     }
 </style>
 <body class="mw-100 mx-auto user-select-none bg-light">
@@ -39,7 +50,7 @@
         <div id="body" class="py-3 m-auto d-flex flex-row justify-content-center flex-wrap">
             <div id="QuestionContainer" class="d-flex flex-column m-3">
                 <div class="my-3">
-                    <fieldset id="uploadFieldset">
+                    <fieldset id="UploadFieldset">
                         <h4>1. 해석할 파일을 업로드해주세요:</h4>
                         <label for="analyzeFile" class="btn btn-dark text-white">파일 업로드</label><span id="fileName" class="mx-3">최대 32MB</span>
                         <input id="analyzeFile" type="file" name="attachment" hidden accept="">
@@ -48,10 +59,10 @@
                             <label for="uploadYn" class="form-check-label">파일을 클라우드에 저장</label>
                         </div>
                     </fieldset>
-                    <p><strong>OR</strong> 클라우드에서 파일 선택:</p>
-                    <ul id="fileListContainer" class="list-group fileList h-100 overflow-auto">
-                        <li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>
-                    </ul>
+                    <p><strong>OR</strong></p>
+                    <div class="d-flex align-items-center gap-3">
+                        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#CloudModal">클라우드에서 파일 선택</button><ul class="list-group"><li id="fileSelectedName" class="d-flex align-items-center list-group-item list-group-item-light">(선택된 파일이 없습니다.)</li></ul>
+                    </div>
                 </div>
                 <div class="my-3">
                     <h4>2. 질문을 선택해주세요:</h4>
@@ -63,13 +74,51 @@
                         <li class="container-fluid list-group-item question custom"><label for="customQuestion">질문 직접 입력</label></li>
                     </ul>
                     <textarea id="customQuestion" class="form-control my-2" type="text" placeholder="여기에 질문을 자유롭게 입력해주세요." disabled></textarea>
-                    <button id="btnSubmit" class="btn btn-primary">해석하기</button><span id="loadingText" style="display: none;"><img alt="" id="loadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
+                    <button id="btnSubmit" class="btn btn-primary">해석하기</button><span id="LoadingText" style="display: none;"><img alt="" id="LoadingIcon" class="mx-2" src="{% static 'demo/img/loading.gif' %}">해석 중...</span>
                 </div>
             </div>
             <div id="ResponseContainer" class="d-flex flex-column m-3">
                 <h4>3. 답변 결과:</h4>
-                <div id="resultContainer" class="container-fluid border p-2 my-2 bg-white">
+                <div id="ResultContainer" class="container-fluid border p-2 my-2 bg-white">
                     Here is where a sample response will be displayed.
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cloud Modal -->
+    <div id="CloudModal" class="modal fade">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">클라우드에서 파일 선택</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>파일을 선택해주세요: </p>
+                    <ul id="fileListContainer" class="list-group fileList h-100 overflow-auto">
+                        <li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-dark" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Options Modal -->
+    <div id="OptionsModal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-dark" data-bs-dismiss="modal">확인</button>
                 </div>
             </div>
         </div>
@@ -117,11 +166,18 @@
         if(!active) {
             $(this).addClass("active");
         }
-        if($(".fileName.active").text()) {
-            $("#uploadFieldset").prop("disabled", true);
+
+        let activeElement = $(".fileName.active");
+        if(activeElement.text()) {
+            $("#UploadFieldset").prop("disabled", true);
+            $("#fileSelectedName").html(activeElement.text() + `<span class="badge bg-secondary rounded-pill ms-auto cancelSelectBtn">선택 취소</span>`);
         } else {
-            $("#uploadFieldset").prop("disabled", false);
+            resetSelectedFile();
         }
+    });
+
+    $(document).on("click", ".cancelSelectBtn", function() {
+        resetSelectedFile();
     });
 
     //선택된 질문 활성화/비활성화
@@ -164,7 +220,7 @@
         }
 
         loading = true;
-        $("#loadingText").show();
+        $("#LoadingText").show();
 
         let uploadYn = $("#uploadYn").is(":checked");
 
@@ -186,18 +242,18 @@
             processData: false,
             success: function(data) {
                 const converter = new showdown.Converter();
-                $("#resultContainer").html(converter.makeHtml(data.result));
+                $("#ResultContainer").html(converter.makeHtml(data.result));
 
                 updateFileList(data.file_list);
 
                 loading = false;
-                $("#loadingText").hide();
+                $("#LoadingText").hide();
             },
             error: function(xhr, ajaxOptions, error) {
                 console.log(xhr);
                 alert('오류가 발생했습니다. 다시 시도하세요.');
                 loading = false;
-                $("#loadingText").hide();
+                $("#LoadingText").hide();
             }
         })
     });
@@ -230,6 +286,12 @@
         } else {
             fileListContainer.append(emptyHtml);
         }
+    }
+
+    const resetSelectedFile = function() {
+        $(".fileName").removeClass("active");
+        $("#UploadFieldset").prop("disabled", false);
+        $("#fileSelectedName").text("(선택된 파일이 없습니다.)");
     }
 </script>
 </html>
