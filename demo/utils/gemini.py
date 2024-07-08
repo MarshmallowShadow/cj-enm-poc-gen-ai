@@ -10,6 +10,8 @@ from . import storage
 intro_text = """Your are a very professional document summarization specialist.
               Given a document, your task is to strictly follow the user\'s instructions.
               please always respond in Korean unless said so otherwise."""
+end_text = """If you are not able to process the document,
+              show the user the contents of the original document without translating it."""
 
 safety_settings = {
     generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH:
@@ -37,7 +39,7 @@ def generate(text, document, temperature, top_p):
     }
 
     responses = model.generate_content(
-        [intro_text, document, text],
+        [intro_text, document, text, end_text],
         generation_config=generation_config,
         safety_settings=safety_settings,
         stream=True,

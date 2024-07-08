@@ -64,7 +64,7 @@
                         </div>
                     </fieldset>
                     <p><strong>OR</strong></p>
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
                         <button class="btn btn-light border-dark" data-bs-toggle="modal" data-bs-target="#CloudModal">클라우드에서 파일 선택</button><ul class="list-group"><li id="fileSelectedName" class="d-flex align-items-center list-group-item list-group-item-light">(선택된 파일이 없습니다.)</li></ul>
                     </div>
                 </div>
@@ -206,7 +206,7 @@
         if(!active) $(this).addClass("active");
 
         if($(".question.active")?.hasClass("custom")) $("#customQuestion").prop("disabled", false);
-        else $("#customQuestion").prop("disabled", true).val("");
+        else $("#customQuestion").prop("disabled", true);
     });
 
     //파일/질문 해석 로직
