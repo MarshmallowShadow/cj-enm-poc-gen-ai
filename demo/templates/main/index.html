@@ -124,6 +124,8 @@
                     <input type="range" class="form-range" id="temperature" min="0" max="2" step="0.1" value="0">
                     <label for="topP" class="form-label">TopP: <output id="topPVal"></output></label>
                     <input type="range" class="form-range" id="topP" min="0" max="1" step="0.01" value="0.95">
+                    <label for="presencePenalty" class="form-label">Presence Penalty: <output id="presencePenaltyVal"></output></label>
+                    <input type="range" class="form-range" id="presencePenalty" min="-2" max="2" step="0.1" value="0.4">
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-dark" data-bs-dismiss="modal">확인</button>
@@ -145,10 +147,14 @@
         fileTypes.forEach(type => accept += type + ", ");
         $("#analyzeFile").attr("accept", accept);
 
+        //클라우드 파일 목록 표시
         let fileList = {{ file_list|safe }};
         updateFileList(fileList);
+
+        //Range 초기값
         $("#temperatureVal").text($("#temperature").val())
         $("#topPVal").text($("#topP").val())
+        $("#presencePenaltyVal").text($("#presencePenalty").val())
     })
 
     //파일명, 크기 표시
@@ -168,12 +174,15 @@
         return true;
     });
 
+    //Range 값 실시간 업데이트
     $("#temperature").on("input", function(){
         $("#temperatureVal").text($(this).val());
     });
-
     $("#topP").on("input", function(){
         $("#topPVal").text($(this).val());
+    });
+    $("#presencePenalty").on("input", function(){
+        $("#presencePenaltyVal").text($(this).val());
     });
 
     //선택된 파일 활성화/비활성화
@@ -242,6 +251,7 @@
         let uploadYn = $("#uploadYn").is(":checked");
         let temperature = $("#temperature").val();
         let topP = $("#topP").val();
+        let presencePenalty = $("#presencePenalty").val();
 
         let formData = new FormData();
 
@@ -253,6 +263,7 @@
         formData.append("customQuestion", customQuestion);
         formData.append("temperature", temperature);
         formData.append("topP", topP);
+        formData.append("presencePenalty", presencePenalty);
         formData.append("csrfmiddlewaretoken", window.CSRF_TOKEN);
 
         $.ajax({
@@ -293,6 +304,7 @@
         return size + scale[scaleIndex];
     }
 
+    //모달에 있는 파일 목록 업데이트
     const updateFileList = function(fileList) {
         const fileListHtml = (fileName, activeName) => {return `<li class="list-group-item list-group-item-secondary fileName ` + ((fileName === activeName) ? `active` : ``) + `">` + fileName + `</li>`}
         const emptyHtml = `<li class="list-group-item list-group-item-light">(클라우드에 저장된 파일이 없습니다)</li>`;
@@ -309,6 +321,7 @@
         }
     }
 
+    //선택된 클라우드 파일 선택 취소
     const resetSelectedFile = function() {
         $(".fileName").removeClass("active");
         $("#UploadFieldset").prop("disabled", false);

@@ -25,7 +25,7 @@ safety_settings = {
 }
 
 
-def generate(text, document, temperature, top_p):
+def generate(text, document, temperature, top_p, presence_penalty):
     result = ""
     vertexai.init(project="cj-enm-poc", location="us-central1")
     model = GenerativeModel(
@@ -36,6 +36,7 @@ def generate(text, document, temperature, top_p):
         "max_output_tokens": 8192,
         "temperature": temperature,
         "top_p": top_p,
+        "presence_penalty": presence_penalty,
     }
 
     responses = model.generate_content(
@@ -50,6 +51,7 @@ def generate(text, document, temperature, top_p):
     return result
 
 
+# Vertex AI 호출 전 로직 (변수 선언)
 def vertex_generate_data(request):
     if bool(request.FILES):
         file = request.FILES['attachment']
@@ -61,9 +63,10 @@ def vertex_generate_data(request):
 
     temperature = Decimal(request.POST['temperature'])
     top_p = Decimal(request.POST['topP'])
+    presence_penalty = Decimal(request.POST['presencePenalty'])
 
     text = request.POST['question']
     if text == '질문 직접 입력':
         text = request.POST['customQuestion']
 
-    return {"result": generate(text, document, temperature, top_p)}
+    return {"result": generate(text, document, temperature, top_p, presence_penalty)}
