@@ -7,11 +7,10 @@ import vertexai.preview.generative_models as generative_models
 
 from . import storage
 
-intro_text = """Your are a very professional document summarization specialist.
-              Given a document, your task is to strictly follow the user\'s instructions.
-              please always respond in Korean unless said so otherwise."""
-end_text = """If you are not able to process the document,
-              show the user the contents of the original document without translating it."""
+intro_text = """Users are now movie or drama producers who are looking for new IP content to find success.
+                To do this, we want to know all the details about the content you specify.
+                Your job is to accurately and faithfully follow the user's instructions and respond in detail.
+                Unless otherwise stated, please always respond in Korean."""
 
 safety_settings = {
     generative_models.HarmCategory.HARM_CATEGORY_HATE_SPEECH:
@@ -40,7 +39,7 @@ def generate(text, document, temperature, top_p, presence_penalty):
     }
 
     responses = model.generate_content(
-        [intro_text, document, text, end_text],
+        [intro_text, document, text],
         generation_config=generation_config,
         safety_settings=safety_settings,
         stream=True,
