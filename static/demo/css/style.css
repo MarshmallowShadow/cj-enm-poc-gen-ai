@@ -1,0 +1,33 @@
+#fileSelectedName {
+    width: 25rem;
+}
+
+#QuestionContainer, #ResponseContainer {
+    width: 40rem;
+}
+
+#LoadingIcon {
+    width: 2rem;
+}
+
+#LoadingText, #ResultContainer, #OptionsModal .modal-body {
+    font-family: "Lucida Console", monospace;
+}
+
+#ResultContainer {
+    height: 35rem;
+    overflow: auto;
+    user-select: text;
+}
+
+#CloudModal {
+    max-height: 40rem;
+}
+
+.fileList {
+    max-width: 30rem;
+}
+
+.cancelSelectBtn {
+    cursor: pointer;
+}

@@ -18,10 +18,13 @@ def summarize(request):
             if upload_yn == "true" and bool(request.FILES):
                 storage.upload_file(request.FILES['attachment'])
 
-            response = gemini.vertex_generate_data(request)
-
+            result = gemini.vertex_generate_data(request)
             file_list = storage.get_file_list()
-            response['file_list'] = file_list
+
+            response = {
+                "result": result,
+                "file_list": file_list,
+            }
 
             return JsonResponse(response, status=200)
 

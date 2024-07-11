@@ -68,4 +68,4 @@ def vertex_generate_data(request):
     if text == '질문 직접 입력':
         text = request.POST['customQuestion']
 
-    return {"result": generate(text, document, temperature, top_p, presence_penalty)}
+    return generate(text, document, temperature, top_p, presence_penalty)
