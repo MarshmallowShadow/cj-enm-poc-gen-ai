@@ -26,7 +26,7 @@ safety_settings = {
 
 def generate(text, document, temperature, top_p, presence_penalty):
     result = ""
-    vertexai.init(project="cj-enm-poc", location="us-central1")
+    vertexai.init(project="cj-enm-poc", location="asia-northeast3")
     model = GenerativeModel(
         "gemini-1.5-flash-001",
     )
